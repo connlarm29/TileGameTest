@@ -9,9 +9,10 @@ import javax.swing.Timer;
 
 public class TileGame extends JPanel implements KeyListener, ActionListener, MouseMotionListener, MouseListener {
 	private static final long serialVersionUID = 1L;
+
 	
 	public static final int WIDTH = 600;
-	public static final int HEIGHT = 600;
+	public static final int HEIGHT = 600 ;
 	public static final int RENDER_DISTANCE = 5;
 
 	public int mouseTileX;
@@ -20,7 +21,7 @@ public class TileGame extends JPanel implements KeyListener, ActionListener, Mou
 	JFrame window = new JFrame("TileGame");
 	World world = new World();
 	Player PLAYER = new Player(World.SPAWN_X, World.SPAWN_Y, world.BLOCKS);
-	Renderer RENDER = new Renderer(world.terrain, world.natural_objects, PLAYER.sprites);
+	Renderer RENDER = new Renderer(world.terrain, world.objects, PLAYER.sprites);
 
 	Inventory INV = new Inventory();
 	Interface GUI = new Interface(PLAYER.sprites);
@@ -36,9 +37,10 @@ public class TileGame extends JPanel implements KeyListener, ActionListener, Mou
 		this.addMouseListener(this);
 		this.setVisible(true);
 		
-		window.setSize(TileGame.WIDTH+4*RENDER.tile_SizeX,TileGame.HEIGHT);
+		window.setSize(TileGame.WIDTH+4*RENDER.tile_SizeX,TileGame.HEIGHT+RENDER.tile_SizeY);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//window.setResizable(false);
+		window.setResizable(false);
+		window.setUndecorated(true);
 		window.add(this);
 		window.setVisible(true);
 		
@@ -50,8 +52,7 @@ public class TileGame extends JPanel implements KeyListener, ActionListener, Mou
 		super.paintComponent(g);
 		RENDER.Update(world.TERRAIN, world.BLOCKS, PLAYER.X, PLAYER.Y, mouseTileX, mouseTileY);
 		RENDER.draw(g);
-		RENDER.drawInventory(g, INV);
-		RENDER.drawHealthbar(g, PLAYER.getHealth());
+		RENDER.drawGui(g, INV, PLAYER.getHealth());
 	}
 	
 	
@@ -79,6 +80,11 @@ public class TileGame extends JPanel implements KeyListener, ActionListener, Mou
 	public void keyPressed(KeyEvent e) {
 				
 		PLAYER.keyPressed(e);
+
+		if(e.getKeyCode() == KeyEvent.VK_X){
+			System.exit(0);
+		}
+
 		
 	}
 
@@ -123,7 +129,7 @@ public class TileGame extends JPanel implements KeyListener, ActionListener, Mou
 
 
 		}else if(button == MouseEvent.BUTTON1){
-			world.addTile(mouseTileX, mouseTileY, 1 ) ;
+			world.addTile(mouseTileX, mouseTileY, 8 ) ;
 		}
 	}
 

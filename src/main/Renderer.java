@@ -22,11 +22,14 @@ public class Renderer {
 	private BufferedImage[] TEX2;
 	private BufferedImage[] PLAYER;
 
-	private BufferedImage WaterEffect;
+	private BufferedImage waterEffect;
 
+	private int menuStart;
+
+	//grabs the water effect because I was too lazy to add it earlier
 	{
 		try {
-			WaterEffect = ImageIO.read(this.getClass().getResource("/res/WetEffect.png"));
+			waterEffect = ImageIO.read(this.getClass().getResource("/res/WetEffect.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -40,7 +43,9 @@ public class Renderer {
 		
 		RD = TileGame.RENDER_DISTANCE;
 		tile_SizeX = TileGame.WIDTH/(RD*2);
-		tile_SizeY = TileGame.HEIGHT/(RD*2);	
+		tile_SizeY = TileGame.HEIGHT/(RD*2);
+
+		menuStart = TileGame.WIDTH+tile_SizeX;
 	}
 	
 	public void Update(int map[][], int blocks[][], int px, int py, int mx, int my) {
@@ -52,70 +57,89 @@ public class Renderer {
 		MAP = map;
 		BLOCKS = blocks;
 	}
-	
+
+
+	/*
+	OH BOY
+	note to future self:
+	you really need to rewrite this entire class, its just too buggy and painful to look at
+	 */
 	public void draw(Graphics g) {
-		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, TileGame.WIDTH+4*tile_SizeX, TileGame.HEIGHT);
-		
+		//iterates through Rows
 		for(int i = PX-RD; i < PX+RD+1; i++ ) {
-			for(int j = (PY-RD); j < (PY+RD); j++ ) {
-				
-			if(i < 0 || i >= MAP.length-1 || j < 0 || j >= MAP.length-1) {
-				g.fillRect((i-(PX-RD))*tile_SizeX, (j-(PY-RD))*tile_SizeY, tile_SizeX, tile_SizeY);
-				}else{
-					g.drawImage(TEX[MAP[i][j]], (i - (PX - RD)) * tile_SizeX, (j - (PY - RD)) * tile_SizeY, tile_SizeX, tile_SizeY, null);
+			//iterates through Columns
+			for(int j = (PY-RD); j < (PY+RD+1); j++ ) {
+				//Checks if the tile is valid
+				if(!(i < 0 || i >= MAP.length-1 || j < 0 || j >= MAP.length-1) && MAP[i][j] != 100) {
+
+					int currentX = (i - (PX - RD)) * tile_SizeX;
+					int currentY = (j - (PY - RD)) * tile_SizeY;
+
+					//Draws from the Terrain array
+					g.drawImage(TEX[MAP[i][j]], currentX, currentY, tile_SizeX, tile_SizeY, null);
+
+					//checks if there is a valid block on the terrain at that location
 					if(BLOCKS[i][j] != 100) {
-						g.drawImage(TEX2[BLOCKS[i][j]], (i - (PX - RD)) * tile_SizeX, (j - (PY - RD)) * tile_SizeY, tile_SizeX, tile_SizeY, null);
+						//Draws the block
+						g.drawImage(TEX2[BLOCKS[i][j]], currentX, currentY, tile_SizeX, tile_SizeY, null);
+
 					}
 
+				//Draws cursor over tiles
 				if(i == MX && j == MY){
-
+					//Creates new Graphics2D object
 					Graphics2D g2 = (Graphics2D) g;
+					//Makes it look sexy n stuff
 					g2.setColor(Color.RED);
 					g2.setStroke(new BasicStroke(5));
-					g2.drawRect((i-(PX-RD))*tile_SizeX, (j-(PY-RD))*tile_SizeY, tile_SizeX, tile_SizeY);
+
+					//Draws cursor box
+					g2.drawRect(currentX, currentY, tile_SizeX, tile_SizeY);
 				}
 
+				//Draws water effects to screen
 				if(MAP[PX][PY] == 3){
-					g.drawImage(WaterEffect, 0,0,tile_SizeX*11,tile_SizeY*10,null);
+					g.drawImage(waterEffect, 0,0,menuStart,tile_SizeY*11,null);
 
 				}
 			}
-				
 			}
 		}
-
-
-		
 	}
-	public void drawHealthbar(Graphics g, int H) {
+
+	public void drawGui(Graphics g, Inventory	 inv, int H) {
+
+		//paints the background blah blah blah
+		g.setColor(Color.DARK_GRAY);
+		g.fillRect(menuStart, 0, 14*tile_SizeX, TileGame.HEIGHT+tile_SizeY);
+
+		//Draws the healthbar, taken from another class
 		int offset = 0;
 		for(int i = 0; i < H; i++) {
-			g.drawImage(PLAYER[1],11*tile_SizeX+offset,0,tile_SizeX,tile_SizeY,null);
+			g.drawImage(PLAYER[1],menuStart+offset,0,tile_SizeX,tile_SizeY,null);
 			offset += tile_SizeX/2;
 		}
 
-	}
-
-	public void drawInventory(Graphics g, Inventory inv) {
-		g.setColor(Color.DARK_GRAY);
-		g.fillRect(11*tile_SizeX, 0, 14*tile_SizeX, TileGame.HEIGHT);
-
+		//Draws the player image depending if they are "wet" ;}
 		if(MAP[PX][PY] == 3){
 			g.drawImage(PLAYER[4],5*tile_SizeX,5*tile_SizeY,tile_SizeX,tile_SizeY,null);
 		}else{
 			g.drawImage(PLAYER[2],5*tile_SizeX,5*tile_SizeY,tile_SizeX,tile_SizeY,null);
 		}
+
+		//Draws those weird little white lines around the inventory
 		g.setColor(Color.WHITE);
-		g.drawLine(11*tile_SizeX, 0,11*tile_SizeX,TileGame.HEIGHT);
-		g.drawLine(11*tile_SizeX, tile_SizeY, 14*tile_SizeX, tile_SizeY);
+		g.drawLine(menuStart, 0,menuStart,TileGame.HEIGHT+tile_SizeY);
+		g.drawLine(menuStart, tile_SizeY, 14*tile_SizeX, tile_SizeY);
 
 
+		//Broken inventory system, nothing to see here!
+		g.drawString("inventory contains" + inv.toString(), menuStart, 2*tile_SizeY);
 
-		g.drawString("inventory contains" + inv.toString(),11*tile_SizeX, 2*tile_SizeY);
-
-
-
+		//The kill button!
+		g.setFont(new Font("TimesRoman", Font.PLAIN, 30));
+		g.setColor(Color.BLACK);
+		g.drawString("Press X to close.", 5, TileGame.HEIGHT+tile_SizeY-5);
 	}
 	
 	
