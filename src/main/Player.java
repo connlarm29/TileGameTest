@@ -1,10 +1,6 @@
 package main;
 
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.util.Arrays;
-
-import javax.imageio.ImageIO;
 
 public class Player {
 
@@ -14,14 +10,13 @@ public class Player {
 	
 	public int X;
 	public int Y;
+	public int selection = 8;
+	public boolean isHurting = false;
+
 	private int SpawnX;
 	private int SpawnY;
 	private int velX = 0;
 	private int velY = 0;
-	
-	BufferedImage sheet;
-	BufferedImage WET;
-	BufferedImage[] sprites = new BufferedImage[5];
 	
 	private int MAP[][];
 	
@@ -31,19 +26,8 @@ public class Player {
 		MAP=m;
 		SpawnX = X;
 		SpawnY = Y;
-		
-		
-		try {
-			sheet = ImageIO.read(this.getClass().getResource("/res/player.png"));
-			WET =  ImageIO.read(this.getClass().getResource("/res/playerWET.png"));
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
-		for(int A = 0; A < 4; A++) {
-			sprites[A] = sheet.getSubimage(A*16,0,16,16);
+
 		}
-		sprites[4] =  WET.getSubimage(0,0,16,16);
-	}
 	
 	
 	
@@ -54,6 +38,9 @@ public class Player {
 	
 	public void harm() {
 		health--;
+		isHurting = true;
+
+		System.out.println("Abused the player!");
 	}
 	
 	public int getHealth() {
@@ -67,7 +54,20 @@ public class Player {
 	}
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
-		
+
+
+		if(key == e.VK_Q && selection > 8){
+
+			selection--;
+
+		}
+
+		if(key == e.VK_E && selection < 13){
+
+			selection++;
+
+		}
+
 			  if(key == e.VK_W) {
 			velY = -1;
 		}else if(key == e.VK_D) {
@@ -90,7 +90,14 @@ public class Player {
 		if(Y == 0) {
 			Y = 0;
 		}
-		if(MAP[X + velX][Y + velY] != 100) {
+
+		if(MAP[X + velX][Y + velY] == Renderer.SPIKES) {
+			harm();
+			velX = 0;
+			velY = 0;
+		}
+
+		if(X+velX >= World.WORLD_SIZE || X+velX < 0 || Y+velY >= World.WORLD_SIZE || Y+velY < 0 || Renderer.solidTiles.contains(MAP[X + velX][Y + velY])) {
 			velX = 0;
 			velY = 0;
 		}

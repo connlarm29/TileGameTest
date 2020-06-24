@@ -21,10 +21,10 @@ public class TileGame extends JPanel implements KeyListener, ActionListener, Mou
 	JFrame window = new JFrame("TileGame");
 	World world = new World();
 	Player PLAYER = new Player(World.SPAWN_X, World.SPAWN_Y, world.BLOCKS);
-	Renderer RENDER = new Renderer(world.terrain, world.objects, PLAYER.sprites);
+	Renderer RENDER = new Renderer();
 
 	Inventory INV = new Inventory();
-	Interface GUI = new Interface(PLAYER.sprites);
+	//Interface GUI = new Interface(PLAYER.sprites);
 	
 	Timer GAME_TIMER = new Timer (10,this);
 	
@@ -52,7 +52,19 @@ public class TileGame extends JPanel implements KeyListener, ActionListener, Mou
 		super.paintComponent(g);
 		RENDER.Update(world.TERRAIN, world.BLOCKS, PLAYER.X, PLAYER.Y, mouseTileX, mouseTileY);
 		RENDER.draw(g);
-		RENDER.drawGui(g, INV, PLAYER.getHealth());
+		RENDER.drawGui(g, INV, PLAYER.getHealth(), PLAYER.selection);
+
+		//Temporary, remove later okie?
+		if(PLAYER.isHurting) {
+			Graphics2D g2d = (Graphics2D) g;
+
+			Color hurtSplash = new Color(255, 50, 50, 144);
+			g2d.setColor(hurtSplash);
+			g2d.fillRect(0, 0, TileGame.WIDTH+RENDER.tile_SizeX, TileGame.HEIGHT+RENDER.tile_SizeY);
+			System.out.println("painting screen");
+			PLAYER.isHurting = false;
+		}
+
 	}
 	
 	
@@ -66,6 +78,13 @@ public class TileGame extends JPanel implements KeyListener, ActionListener, Mou
 	public void actionPerformed(ActionEvent e) {
 
 		repaint();
+
+		//yeets the player like a chump
+		if(PLAYER.getHealth() <= 0){
+
+			GAME_TIMER.stop();
+
+		}
 
 	}
 
@@ -109,7 +128,7 @@ public class TileGame extends JPanel implements KeyListener, ActionListener, Mou
 		mouseTileX = (e.getX()/tileSizeX)+(PLAYER.X-TileGame.RENDER_DISTANCE);
 		mouseTileY = (e.getY()/tileSizeY)+(PLAYER.Y-TileGame.RENDER_DISTANCE);
 
-		System.out.println("MOUSE: " + mouseTileX + ", " + mouseTileY);
+		//System.out.println("MOUSE: " + mouseTileX + ", " + mouseTileY);
 	}
 
 	@Override
@@ -121,15 +140,17 @@ public class TileGame extends JPanel implements KeyListener, ActionListener, Mou
 	@Override
 	public void mousePressed(MouseEvent e) {
 		int button = e.getButton();
-		if(button == MouseEvent.BUTTON3){
-			if(world.BLOCKS[mouseTileX][mouseTileY] != 100) {
-				INV.add(world.BLOCKS[mouseTileX][mouseTileY]);
-				world.addTile(mouseTileX, mouseTileY, 100);
+		if(mouseTileX >=0 && mouseTileX < World.WORLD_SIZE && mouseTileY >=0 && mouseTileY < World.WORLD_SIZE) {
+			if (button == MouseEvent.BUTTON3) {
+				if (world.BLOCKS[mouseTileX][mouseTileY] != 100) {
+					//INV.add(world.BLOCKS[mouseTileX][mouseTileY]);
+					world.addTile(mouseTileX, mouseTileY, 100);
+				}
+
+
+			} else if (button == MouseEvent.BUTTON1) {
+				world.addTile(mouseTileX, mouseTileY, PLAYER.selection);
 			}
-
-
-		}else if(button == MouseEvent.BUTTON1){
-			world.addTile(mouseTileX, mouseTileY, 8 ) ;
 		}
 	}
 

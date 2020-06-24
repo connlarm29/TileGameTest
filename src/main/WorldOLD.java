@@ -1,3 +1,11 @@
+
+/*
+*
+*
+* Just the old world generation methods, nothing to se here folks
+*
+* */
+
 package main;
 
 import java.awt.*;

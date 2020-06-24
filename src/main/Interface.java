@@ -1,3 +1,12 @@
+/*
+*
+*
+* This is an unused box of sadness, it should not be minded until i decide what to do with it
+*
+*
+* */
+
+
 package main;
 
 import javax.swing.*;

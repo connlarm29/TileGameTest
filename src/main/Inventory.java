@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 public class Inventory {
 
-    ArrayList[] idlist = new ArrayList[9];
-
     ArrayList<Item> inventory = new ArrayList<Item>();
 
     public Inventory() {
