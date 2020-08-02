@@ -16,8 +16,8 @@ public class World {
 	public int TERRAIN[][] = new int[WORLD_SIZE][WORLD_SIZE];
 	public int BLOCKS[][] = new int[WORLD_SIZE][WORLD_SIZE];
 
-	Random randomValue = new Random();
-	int T = new Random().nextInt(500)+500;
+	//Random randomValue = new Random();
+	//int T = new Random().nextInt(500)+500;
 
 	public World() {
 
@@ -114,6 +114,24 @@ public class World {
 			if(TERRAIN[x][y] == Renderer.GRASS) {
 				BLOCKS[x][y] = Renderer.ROCK;
 				}
+		}
+
+		for(int i = 0; i < TREES/2; i++){
+
+			int x = new Random().nextInt(WORLD_SIZE);
+			int y = new Random().nextInt(WORLD_SIZE);
+
+			try{
+
+				if(BLOCKS[x][y] == Renderer.GREEN_TREE){
+					BLOCKS[x][y] = 100;
+					TERRAIN[x][y] = Renderer.RIPPED_GRASS;
+				}
+
+			}catch(Exception e){}
+
+
+
 		}
 
 		System.out.println("Added some (Dwayne) rocks (Johnson)");

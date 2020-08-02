@@ -137,7 +137,7 @@ public class Renderer {
 				}
 
 				//Draws water effects to screen
-				if(MAP[PX][PY] == 3){
+				if(MAP[PX][PY] == Renderer.WATER){
 					g.drawImage(waterEffect, 0,0,menuStart,tile_SizeY*11,null);
 
 				}
@@ -161,9 +161,9 @@ public class Renderer {
 
 		//Draws the player image depending if they are dead or wet
 		if(MAP[PX][PY] == Renderer.WATER){
-			g.drawImage(TEX[Renderer.PLAYER_WET],5*tile_SizeX,5*tile_SizeY,tile_SizeX,tile_SizeY,null);
+			g.drawImage(TEX[Renderer.PLAYER_WET],TileGame.RENDER_DISTANCE*tile_SizeX,TileGame.RENDER_DISTANCE*tile_SizeY,tile_SizeX,tile_SizeY,null);
 		}else if(H <= 0){
-			g.drawImage(TEX[Renderer.PLAYER_DEAD],5*tile_SizeX,5*tile_SizeY,tile_SizeX,tile_SizeY,null);
+			g.drawImage(TEX[Renderer.PLAYER_DEAD],TileGame.RENDER_DISTANCE*tile_SizeX,TileGame.RENDER_DISTANCE*tile_SizeY,tile_SizeX,tile_SizeY,null);
 
 			Graphics2D g2d = (Graphics2D) g;
 			Color hurtSplash = new Color(199, 17, 17, 144);
@@ -175,13 +175,13 @@ public class Renderer {
 			g.drawString("Buckaroo you just bit the dust.", 5, 55);
 
 		}else{
-			g.drawImage(TEX[Renderer.PLAYER_ALIVE],5*tile_SizeX,5*tile_SizeY,tile_SizeX,tile_SizeY,null);
+			g.drawImage(TEX[Renderer.PLAYER_ALIVE],TileGame.RENDER_DISTANCE*tile_SizeX,TileGame.RENDER_DISTANCE*tile_SizeY,tile_SizeX,tile_SizeY,null);
 		}
 
 		//Draws those weird little white lines around the inventory
 		g.setColor(Color.WHITE);
 		g.drawLine(menuStart, 0,menuStart,TileGame.HEIGHT+tile_SizeY);
-		g.drawLine(menuStart, tile_SizeY, 14*tile_SizeX, tile_SizeY);
+		g.drawLine(menuStart, tile_SizeY, menuStart+(tile_SizeX*4), tile_SizeY);
 
 
 		//Broken inventory system, nothing to see here!
