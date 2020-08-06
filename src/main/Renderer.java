@@ -18,7 +18,7 @@ public class Renderer {
 	int MY;
 	int MAP[][];
 	int BLOCKS[][];
-	private Image[] TEX = new Image[20];
+	private Image[] TEX = new Image[51];
 	private BufferedImage tileSheet;
 	ImageIcon animWater = new ImageIcon(this.getClass().getResource("/res/WATER.gif"));
 	private BufferedImage waterEffect;
@@ -44,7 +44,8 @@ public class Renderer {
 	public static final int PLAYER_ALIVE = 16;
 	public static final int PLAYER_DEAD = 17;
 	public static final int PLAYER_WET = 18;
-	public static final int WATER = 19;
+	public static final int WATER = 50;
+	public static final int ICE = 19;
 
 	public static final ArrayList<Integer> solidTiles = new ArrayList<Integer>();
 
@@ -56,11 +57,11 @@ public class Renderer {
 	try {
 			//gets the main tilesheet and feeds it into an array
 			tileSheet = ImageIO.read(this.getClass().getResource("/res/Tilemapv1.png"));
-		for(int A = 0; A < 19; A++) {
+		for(int A = 0; A < 20; A++) {
 			TEX[A] = tileSheet.getSubimage(A*16,0,16,16);
 		}
 		//Grabs the animated water and screen splash effect for later use
-		TEX[19] = animWater.getImage();
+		TEX[WATER] = animWater.getImage();
 		waterEffect = ImageIO.read(this.getClass().getResource("/res/WetEffect.png"));
 		} catch (IOException e) {
 			e.printStackTrace();

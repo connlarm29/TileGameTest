@@ -12,6 +12,7 @@ public class World {
 	public static final int LAKE_COUNT = 10;
 	public static final int SPAWN_X = 500;
 	public static final int SPAWN_Y = 500;
+	public static final int SNOW_THRESHOLD = 100;
 
 	public int TERRAIN[][] = new int[WORLD_SIZE][WORLD_SIZE];
 	public int BLOCKS[][] = new int[WORLD_SIZE][WORLD_SIZE];
@@ -32,6 +33,28 @@ public class World {
 		}
 
 		System.out.println("Arrays cleared!");
+
+		for(int i = 0; i < WORLD_SIZE; i++){
+			for(int j = 0; j < SNOW_THRESHOLD; j++){
+
+				TERRAIN[i][j] = Renderer.SNOW;
+			}
+		}
+
+		for(int i = 0; i < WORLD_SIZE*10; i++) {
+
+			int x = new Random().nextInt(WORLD_SIZE);
+			int y = new Random().nextInt(SNOW_THRESHOLD/10)+SNOW_THRESHOLD;
+
+			int id = Renderer.SNOW;
+
+			try {
+				if (TERRAIN[x][y + 1] == id || TERRAIN[x + 1][y] == id || TERRAIN[x][y - 1] == id || TERRAIN[x - 1][y] == id) {
+					TERRAIN[x][y] = id;
+				}
+			}catch(Exception e){}
+
+		}
 
 		//Seeds lakes in the world
 		for(int i = 0; i < LAKE_COUNT; i++){
@@ -102,6 +125,8 @@ public class World {
 			int y = new Random().nextInt(WORLD_SIZE);
 			if(TERRAIN[x][y] == Renderer.GRASS) {
 			BLOCKS[x][y] = Renderer.GREEN_TREE;
+			}else if(TERRAIN[x][y] == Renderer.SNOW) {
+				BLOCKS[x][y] = Renderer.PINE_TREE;
 			}
 		}
 
@@ -111,7 +136,7 @@ public class World {
 		for(int j = 0; j < ROCKS; j++) {
 			int x = new Random().nextInt(WORLD_SIZE);
 			int y = new Random().nextInt(WORLD_SIZE);
-			if(TERRAIN[x][y] == Renderer.GRASS) {
+			if(TERRAIN[x][y] == Renderer.GRASS || TERRAIN[x][y] == Renderer.SNOW) {
 				BLOCKS[x][y] = Renderer.ROCK;
 				}
 		}
@@ -132,12 +157,64 @@ public class World {
 
 
 
+
+
+
+
 		}
 
 		System.out.println("Added some (Dwayne) rocks (Johnson)");
 
 		System.out.println("OkieDokie! Dont mess this one up like we did here on earth!");
-		
+
+
+		for(int i = 0; i < WORLD_SIZE; i++){
+			for(int j = 0; j < SNOW_THRESHOLD; j++){
+
+				try {
+					if(TERRAIN[i][j] == Renderer.WATER && (TERRAIN[i][j-10] == Renderer.SNOW || TERRAIN[i+10][j] == Renderer.SNOW || TERRAIN[i-10][j] == Renderer.SNOW)) {
+						TERRAIN[i][j] = Renderer.ICE;
+					}
+				} catch (Exception e) {}
+			}
+		}
+
+		for(int i = 0; i < LAKE_COUNT*5; i++){
+
+			int x = new Random().nextInt(WORLD_SIZE);
+			int y = new Random().nextInt(SNOW_THRESHOLD);
+
+			int id = Renderer.ICE;
+			if (TERRAIN[x][y] == Renderer.WATER && y <= SNOW_THRESHOLD) {
+
+				try {
+					TERRAIN[x][y + 1] = id;
+					TERRAIN[x + 1][y + 1] = id;
+					TERRAIN[x + 1][y] = id;
+					TERRAIN[x + 1][y - 1] = id;
+					TERRAIN[x][y - 1] = id;
+					TERRAIN[x - 1][y - 1] = id;
+					TERRAIN[x - 1][y] = id;
+					TERRAIN[x - 1][y + 1] = id;
+				} catch (Exception e) {}
+			}
+		}
+
+		for(int i = 0; i < WORLD_SIZE*10; i++){
+
+			int x = new Random().nextInt(WORLD_SIZE);
+			int y = new Random().nextInt(SNOW_THRESHOLD);
+
+			int id = Renderer.ICE;
+
+			try {
+				if (TERRAIN[x][y + 1] == id || TERRAIN[x + 1][y] == id || TERRAIN[x][y - 1] == id || TERRAIN[x - 1][y] == id) {
+					TERRAIN[x][y] = id;
+				}
+			}catch(Exception e){}
+
+		}
+
 	}
 
 	//Just a method to edit the world XD
